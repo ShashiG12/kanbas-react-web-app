@@ -70,6 +70,10 @@ export default function AssignmentEditor() {
       <input type="date"></input>
 
       <input type="date"></input>
+
+      <br />
+      <button>Cancel</button>
+      <button>Save</button>
     </div>
   );
 }

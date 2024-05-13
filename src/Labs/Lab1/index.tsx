@@ -321,7 +321,7 @@ export default function Lab1() {
           <h4>Anchor tag</h4>
           Please
           <a href="https://github.com/ShashiG12">click here</a>
-          to get dummy text
+          to go to my github page
           <br />
         </div>
       </div>
