@@ -37,39 +37,39 @@ export default function AssignmentEditor() {
       <br />
       <label>Online Entry Options</label>
       <br />
-      <input type="checkbox" name="check-genre" id="wd-chkbox-comedy" />
-      <label>Text Entry</label>
+      <input type="checkbox" name="check-genre" id="wd-text-entry" />
+      <label htmlFor="wd-text-entry">Text Entry</label>
       <br />
-      <input type="checkbox" name="check-genre" id="wd-chkbox-comedy" />
-      <label>Website URL</label>
+      <input type="checkbox" name="check-genre" id="wd-website-url" />
+      <label htmlFor="wd-website-url">Website URL</label>
       <br />
-      <input type="checkbox" name="check-genre" id="wd-chkbox-comedy" />
-      <label>Media Recordings</label>
+      <input type="checkbox" name="check-genre" id="wd-media-recordings" />
+      <label htmlFor="wd-media-recordings">Media Recordings</label>
       <br />
-      <input type="checkbox" name="check-genre" id="wd-chkbox-comedy" />
-      <label>Student Annotation</label>
+      <input type="checkbox" name="check-genre" id="wd-student-annotation" />
+      <label htmlFor="wd-student-annotation">Student Annotation</label>
       <br />
-      <input type="checkbox" name="check-genre" id="wd-chkbox-comedy" />
-      <label>File Uploads</label>
-      <br />
-
-      <br />
-      <label>Assign Assign to</label>
-      <br />
-      <input defaultValue="Everyone"></input>
+      <input type="checkbox" name="check-genre" id="wd-file-upload" />
+      <label htmlFor="wd-file-upload">File Uploads</label>
       <br />
 
-      <label>Due</label>
       <br />
-      <input type="date"></input>
+      <label htmlFor="wd-assign-to">Assign Assign to</label>
+      <br />
+      <input defaultValue="Everyone" id="wd-assign-to"></input>
       <br />
 
-      <label>Available From</label>
-      <label>Until  </label>
+      <label htmlFor="wd-due-date">Due</label>
       <br />
-      <input type="date"></input>
+      <input type="date" id="wd-due-date"></input>
+      <br />
 
-      <input type="date"></input>
+      <label htmlFor="wd-available-from">Available From</label>
+      <label htmlFor="wd-available-until">Until  </label>
+      <br />
+      <input type="date" id="wd-available-from"></input>
+
+      <input type="date" id="wd-available-until"></input>
 
       <br />
       <button>Cancel</button>
