@@ -5,7 +5,7 @@ import { HashRouter, Route, Routes, Navigate }
 function App() {
   return (
     <HashRouter>
-      <div>
+      <div className="h-100">
         <Routes>
           <Route path="/"
                  element={<Navigate to="Labs" />} />

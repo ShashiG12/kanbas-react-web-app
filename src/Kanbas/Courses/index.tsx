@@ -10,23 +10,19 @@ export default function Courses() {
     <div id="wd-courses">
       <h2>Course 1234</h2>
       <hr />
-      <table>
-        <tr>
-          <td valign="top">
-            <CoursesNavigation />
-          </td>
-          <td valign="top">
-            <Routes>
-              <Route path="/" element={<Navigate to="Home" />} />
-              <Route path="Home" element={<Home />} />
-              <Route path="Modules" element={<Modules />} />
-              <Route path="Assignments"
-                     element={<Assignments />} />
-              <Route path="Assignments/:id"
-                     element={<AssignmentEditor />} />
-            </Routes>
-          </td>
-        </tr>
-      </table>
+      <div className="d-flex">
+        <div className="d-none d-md-block">
+          <CoursesNavigation />
+        </div>
+        <div className="flex-fill">
+          <Routes>
+            <Route path="Home" element={<Home />} />
+            <Route path="Modules" element={<Modules />} />
+            <Route path="Assignments" element={<Assignments />} />
+            <Route path="Assignments/:id" element={<AssignmentEditor />} />
+          </Routes>
+        </div>
+      </div>
     </div>
-);}
+  );
+}
