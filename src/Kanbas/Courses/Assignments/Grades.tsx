@@ -11,7 +11,7 @@ export default function Grades() {
                     <FaFileImport className="me-2" />
                     Import
                 </button>
-                <button className="btn btn-lg btn-secondary me-1 col-2">
+                <button className="btn btn-lg btn-secondary dropdown-toggle me-1 col-2">
                     <BiSolidFileImport className="me-2" />
                     Export
                 </button>
@@ -67,46 +67,46 @@ export default function Grades() {
                         <tr>
                             <th scope="row" className="text-danger">Shashi Gollamudi</th>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" className="text-danger">John Smith</th>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
+                            </td>
+                            <td>
+                                100%
                             </td>
                             <td>
                                 <input type="text" className="form-control" defaultValue="100%" />
                             </td>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
-                            </td>
-                            <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                         </tr>
                         <tr>
                             <th scope="row" className="text-danger">Jane Doe</th>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                             <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
+                                100%
                             </td>
                         </tr>
                     </tbody>
