@@ -12,13 +12,6 @@ export default function Grades() {
     const grades = db.grades;
     const assignments = db.assignments;
 
-    const enrolledUsers = enrollments
-        .filter(enrollment => enrollment.course === cid)
-        .map(enrollment => {
-            return users.find(user => user._id === enrollment.user);
-    });
-
-
     return (
         <div id="wd-grades" className="container">
             <div className="row justify-content-end">
@@ -80,22 +73,27 @@ export default function Grades() {
                         </tr>
                     </thead>
                     <tbody>
-                    {enrolledUsers.map((user: any) => (
-                        <tr key={user._id}>
-                            <th scope="row" className="text-danger">{user.firstName} {user.lastName}</th>
-                            {assignments
-                                .filter((assignment: any) => assignment.course === cid)
-                                .map((assignment) => {
-                                    const grade = grades.find((grade) => grade.student === user._id && grade.assignment === assignment._id);
-                                    return (
-                                        <td key={assignment._id}>
-                                            {grade ? `${grade.grade}` : 'N/A'}
-                                        </td>
-                                    );
-                                })
-                            }
-                        </tr>
-                    ))}
+                    {db.enrollments
+                            .filter(enrollment => enrollment.course === cid)
+                            .map(enrollment => {
+                                return (
+                                    <tr key={enrollment.user}>
+                                        <th scope="row" className="text-danger">
+                                            {db.users.filter(user => user._id === enrollment.user)
+                                                .map(user => `${user.firstName} ${user.lastName}`)}
+                                        </th>
+                                        {db.assignments
+                                            .filter(assignment => assignment.course === cid)
+                                            .map(assignment => (
+                                                <td key={assignment._id}>
+                                                    {db.grades
+                                                        .filter(grade => grade.student === enrollment.user && grade.assignment === assignment._id)
+                                                        .map(grade => grade.grade)}
+                                                </td>
+                                            ))}
+                                    </tr>
+                                );
+                            })}
                     </tbody>
                 </table>
             </div>
