@@ -3,4 +3,9 @@
     background-color: white;
     border-left: 3px solid black !important;
   }
+  #wd-courses-navigation > .nav-link.active {
+    color: black;
+    background-color: white;
+    border-left: 3px solid black !important;
+  }
   

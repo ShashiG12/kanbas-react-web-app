@@ -2,8 +2,23 @@ import { FaFileImport } from "react-icons/fa";
 import { BiSolidFileImport } from "react-icons/bi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { CiSearch, CiFilter } from "react-icons/ci";
+import { useParams } from "react-router";
+import * as db from "../../Database";
 
 export default function Grades() {
+    const { cid } = useParams();
+    const users = db.users;
+    const enrollments = db.enrollments;
+    const grades = db.grades;
+    const assignments = db.assignments;
+
+    const enrolledUsers = enrollments
+        .filter(enrollment => enrollment.course === cid)
+        .map(enrollment => {
+            return users.find(user => user._id === enrollment.user);
+    });
+
+
     return (
         <div id="wd-grades" className="container">
             <div className="row justify-content-end">
@@ -57,58 +72,30 @@ export default function Grades() {
                     <thead>
                         <tr>
                             <th scope="col">Student Name</th>
-                            <th scope="col">A1 Setup</th>
-                            <th scope="col">A2 HTML</th>
-                            <th scope="col">A3 CSS</th>
-                            <th scope="col">A4 Bootstrap</th>
+                            {assignments
+                                .filter((assignment: any) => assignment.course === cid)
+                                .map((assignment: any) => (
+                                    <th scope="col">{assignment.title}</th>
+                                ))}
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row" className="text-danger">Shashi Gollamudi</th>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                100%
-                            </td>
+                    {enrolledUsers.map((user: any) => (
+                        <tr key={user._id}>
+                            <th scope="row" className="text-danger">{user.firstName} {user.lastName}</th>
+                            {assignments
+                                .filter((assignment: any) => assignment.course === cid)
+                                .map((assignment) => {
+                                    const grade = grades.find((grade) => grade.student === user._id && grade.assignment === assignment._id);
+                                    return (
+                                        <td key={assignment._id}>
+                                            {grade ? `${grade.grade}` : 'N/A'}
+                                        </td>
+                                    );
+                                })
+                            }
                         </tr>
-                        <tr>
-                            <th scope="row" className="text-danger">John Smith</th>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                <input type="text" className="form-control" defaultValue="100%" />
-                            </td>
-                            <td>
-                                100%
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row" className="text-danger">Jane Doe</th>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                100%
-                            </td>
-                            <td>
-                                100%
-                            </td>
-                        </tr>
+                    ))}
                     </tbody>
                 </table>
             </div>

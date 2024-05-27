@@ -1,17 +1,27 @@
+import { useParams } from "react-router";
+import * as db from "../../Database";
+
 export default function AssignmentEditor() {
+  const { cid, id } = useParams();
+  const assignments = db.assignments;
+  
   return (
     <div id="wd-assignments-editor" className="container">
+      {assignments
+      .filter((assignment: any) => assignment._id === id)
+      .map((assignment: any) => (
+      <div>
       <div className="row mb-3">
         <label htmlFor="wd-name">Assignment Name</label>
         <div className="col-9">
-          <input id="wd-name" className="form-control" value="A1 - ENV + HTML" />
+          <input id="wd-name" className="form-control" value={assignment.title} />
         </div>
       </div>
 
       <div className="row mb-3">
         <div className="col-9">
           <textarea id="wd-description" className="form-control">
-            The assignment is available online. Submit a link to the landing page of your project.
+            {assignment.description}
           </textarea>
         </div>
       </div>
@@ -21,7 +31,7 @@ export default function AssignmentEditor() {
           <label htmlFor="wd-points">Points</label>
         </div>
         <div className="col-9">
-          <input id="wd-points" className="form-control" value={100} />
+          <input id="wd-points" className="form-control" value={assignment.points} />
         </div>
       </div>
 
@@ -101,7 +111,7 @@ export default function AssignmentEditor() {
         </div>
         <div className="col-9">
         <label htmlFor="wd-due-date">Due</label>
-          <input type="date" id="wd-due-date" className="form-control" />
+          <input type="date" id="wd-due-date" className="form-control" value={assignment.due_date}/>
         </div>
       </div>
 
@@ -110,7 +120,7 @@ export default function AssignmentEditor() {
         </div>
         <div className="col-3">
         <label htmlFor="wd-available-from">Available from</label>
-          <input type="date" id="wd-available-from" className="form-control" />
+          <input type="date" id="wd-available-from" className="form-control" value={assignment.available_date}/>
         </div>
 
         <div className="col-3">
@@ -125,6 +135,8 @@ export default function AssignmentEditor() {
           <button className="btn btn-danger">Save</button>
         </div>
       </div>
+      </div>
+      ))}
     </div>
   );
 }
