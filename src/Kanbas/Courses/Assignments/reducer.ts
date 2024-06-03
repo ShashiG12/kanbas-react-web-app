@@ -3,38 +3,38 @@ import { assignments } from "../../Database";
 const initialState = {
   assignments: assignments,
 };
-const modulesSlice = createSlice({
+const assignmentsSlice = createSlice({
   name: "assignments",
   initialState,
   reducers: {
     addAssignment: (state, { payload: assignment }) => {
       const newAssignment: any = {
         _id: new Date().getTime().toString(),
-        title: "New Assignment",
+        title: assignment.title,
         course: assignment.course,
-        description: "New Assignment",
-        points: 100,
-        due_date: "2024-05-27",
-        available_date : "2024-05-26"
+        description: assignment.description,
+        points: assignment.points,
+        due_date: assignment.due_date,
+        available_date : assignment.available_date
       };
       state.assignments = [...state.assignments, newAssignment] as any;
     },
     deleteAssignment: (state, { payload: assignmentID }) => {
       state.assignments = state.assignments.filter(
-        (m: any) => m._id !== assignmentID);
+        (a: any) => a._id !== assignmentID);
     },
     updateAssignment: (state, { payload: assignment }) => {
-      state.assignments = state.assignments.map((m: any) =>
-        m._id === assignment._id ? assignment : m
+      state.assignments = state.assignments.map((a: any) =>
+        a._id === assignment._id ? assignment : a
       ) as any;
     },
     editAssignment: (state, { payload: assignmentID }) => {
-      state.assignments = state.assignments.map((m: any) =>
-        m._id === assignmentID ? { ...m, editing: true } : m
+      state.assignments = state.assignments.map((a: any) =>
+        a._id === assignmentID ? { ...a, editing: true } : a
       ) as any;
     },
   },
 });
 export const { addAssignment, deleteAssignment, updateAssignment, editAssignment } =
-  modulesSlice.actions;
-export default modulesSlice.reducer;
+assignmentsSlice.actions;
+export default assignmentsSlice.reducer;

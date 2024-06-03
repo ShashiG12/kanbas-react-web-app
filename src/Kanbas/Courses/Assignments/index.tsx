@@ -8,10 +8,14 @@ import AssignmentOuterControls from "./AssignmentOuterControls";
 import { useParams } from "react-router";
 import * as db from "../../Database";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteAssignment } from "./reducer";
 
 export default function Assignments() {
   const { cid } = useParams();
-  const assignments = db.assignments;
+  //const assignments = db.assignments;
+  const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+
   return (
     <div id="wd-assignments">
       <div className="row">
@@ -40,7 +44,7 @@ export default function Assignments() {
                   <span className="text-danger">Multiple Modules</span> | <b>Not available until</b> {assignment.available_date} |
                   <br />
                   <b>Due</b> {assignment.due_date} | {assignment.points} pts
-                  <AssignmentsControlButtons />
+                  <AssignmentsControlButtons id={assignment._id}/>
                 </div>
               </div>
             </li>
