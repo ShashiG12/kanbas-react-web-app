@@ -4,6 +4,7 @@ import * as db from "../../Database";
 import { addAssignment, editAssignment, updateAssignment } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import * as client from "./client";
 
 export default function AssignmentEditor() {
   const { cid, id } = useParams();
@@ -24,7 +25,15 @@ export default function AssignmentEditor() {
   const [due_date, setDueDate] = useState(existingAssignment ? existingAssignment.due_date : "");
   const [available_date, setAvailableDate] = useState(existingAssignment ? existingAssignment.available_date : "");
 
-  
+  const createAssignment = async (assignment: any) => {
+    const newAssignment = await client.createAssignment(cid as string, assignment);
+    dispatch(addAssignment(newAssignment));
+  };
+  const saveAssignment = async (assignment: any) => {
+    const status = await client.updateAssignment(assignment);
+    dispatch(updateAssignment(assignment));
+  };
+
   
   return (
     <div id="wd-assignments-editor" className="container">
@@ -161,10 +170,10 @@ export default function AssignmentEditor() {
             <button className="btn btn-danger"
             onClick={() => {
               if (existingAssignment) {
-                dispatch(updateAssignment({ _id:id, title, course: cid, description, points, due_date, available_date }));
+                saveAssignment({ _id:id, title, course: cid, description, points, due_date, available_date });
               } else {
                 console.log("added")
-                dispatch(addAssignment({ _id:id, title, course: cid, description, points, due_date, available_date }));
+                createAssignment({ _id:id, title, course: cid, description, points, due_date, available_date });
               }
               console.log(assignments);
             }}

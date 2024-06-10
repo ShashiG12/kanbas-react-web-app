@@ -1,20 +1,29 @@
-import React from 'react';
+import { useState, useEffect } from "react";
 import AssignmentsControlButtons from "./AssignmentsControlButtons";
 import { BsGripVertical } from "react-icons/bs";
 import { MdOutlineAssignment } from "react-icons/md";
-import GreenCheckmark from "../Modules/GreenCheckmark";
 import AssignmentControls from "./AssignmentsControls";
 import AssignmentOuterControls from "./AssignmentOuterControls";
 import { useParams } from "react-router";
 import * as db from "../../Database";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteAssignment } from "./reducer";
+import { setAssignments, addAssignment } from "./reducer";
+import * as client from "./client";
 
 export default function Assignments() {
   const { cid } = useParams();
-  //const assignments = db.assignments;
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
+  const dispatch = useDispatch();
+  const fetchAssignments = async () => {
+    const assignments = await client.findAssignmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
+
 
   return (
     <div id="wd-assignments">
