@@ -17,6 +17,7 @@ export const updateCourse = async (course: any) => {
     const response = await axios.put(`${COURSES_API}/${course.id}`, course);
     return response.data;
   };
+
   
   
   
