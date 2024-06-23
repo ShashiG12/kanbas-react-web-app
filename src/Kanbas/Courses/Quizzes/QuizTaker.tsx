@@ -109,6 +109,13 @@ export default function QuizTaker() {
     </div>
   );
 
+  const userAttempts = getPastSubmissions();
+  const maxAttemptsReached = currentUser.role !== "FACULTY" && (
+    quiz.multipleAttempts
+      ? userAttempts.length >= quiz.howManyAttempts
+      : userAttempts.length >= 1
+  );
+
   return (
     <div id="quiz-taker" className="container">
         {currentUser.role === "FACULTY" && (
@@ -119,15 +126,20 @@ export default function QuizTaker() {
         )}
       <h1>{quiz.title}</h1>
       <h2>{quiz.instructions}</h2>
+      <p>Attempt: {userAttempts.length}/{quiz.howManyAttempts}</p>
       {!isTakingQuiz && !viewingSubmissions ? (
-        <div className="text-center">
-          <button className="btn btn-danger me-3" onClick={() => setIsTakingQuiz(true)}>
-            Take Quiz
-          </button>
-          <button className="btn btn-secondary" onClick={() => setViewingSubmissions(true)}>
-            View Past Submissions
-          </button>
-        </div>
+         <div className="text-center">
+         {!maxAttemptsReached ? (
+           <button className="btn btn-danger me-3" onClick={() => setIsTakingQuiz(true)}>
+             Take Quiz
+           </button>
+         ) : (
+           <p>You have reached the maximum number of attempts for this quiz.</p>
+         )}
+         <button className="btn btn-secondary" onClick={() => setViewingSubmissions(true)}>
+           View Past Submissions
+         </button>
+       </div>
       ) : isTakingQuiz ? (
         <>
           <h2>{quiz.title}</h2>
@@ -215,12 +227,14 @@ export default function QuizTaker() {
           <h2>Past Submissions</h2>
           {getPastSubmissions().map((attempt:any, index:any) => renderSubmission(attempt, index))}
           <div className="text-center mt-3">
-            <button className="btn btn-danger me-3" onClick={() => setIsTakingQuiz(true)}>
-              Take Quiz
-            </button>
-            <button className="btn btn-secondary" onClick={() => setViewingSubmissions(false)}>
-              Back
-            </button>
+            {!maxAttemptsReached && (
+                <button className="btn btn-danger me-3" onClick={() => setIsTakingQuiz(true)}>
+                  Take Quiz
+                </button>
+              )}
+              <button className="btn btn-secondary" onClick={() => setViewingSubmissions(false)}>
+                Back
+              </button>
           </div>
         </>
       )}

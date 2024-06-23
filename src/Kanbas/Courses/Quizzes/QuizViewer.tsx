@@ -46,6 +46,7 @@ export default function QuizViewer() {
         <li><b>Shuffle Answers:</b> {existingQuiz.shuffleAnswers ? "Yes" : "No"}</li>
         <li><b>Time Limit:</b> {existingQuiz.timeLimit} minutes</li>
         <li><b>Multiple Attempts:</b> {existingQuiz.multipleAttempts ? "Allowed" : "Not Allowed"}</li>
+        <li><b>How Many Attempts:</b> {existingQuiz.howManyAttempts}</li>
         <li><b>Show Correct Answers:</b> {existingQuiz.showCorrectAnswers ? "Yes" : "No"}</li>
         <li><b>Access Code:</b> {existingQuiz.accessCode}</li>
         <li><b>One At A Time:</b> {existingQuiz.oneAtATime ? "Yes" : "No"}</li>

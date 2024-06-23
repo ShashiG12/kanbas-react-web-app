@@ -9,6 +9,7 @@ import { MdOutlineAssignment } from "react-icons/md";
 import { Link } from "react-router-dom";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import { IoEllipsisVertical } from "react-icons/io5";
+import moment from "moment";
 
 export default function Quizzes() {
   const { cid } = useParams();
@@ -45,6 +46,33 @@ export default function Quizzes() {
     setActiveQuizId(quizId === activeQuizId ? null : quizId);
   };
 
+  const formatDateString = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const getAvailabilityStatus = (quiz: any) => {
+    const availableDate = new Date(quiz.availableDate);
+    const availableUntilDate = new Date(quiz.availableUntilDate);
+    const dueDate = new Date(quiz.dueDate);
+
+    const currentDate = new Date();
+    console.log(availableUntilDate)
+    if (currentDate > availableUntilDate) {
+      return "Closed";
+    } else if (currentDate >= availableDate && currentDate <= availableUntilDate) {
+      return "Available";
+    } else if (currentDate < availableDate) {
+      return `Not available until ${formatDateString(quiz.availableDate)}`;
+    } else {
+      return "";
+    }
+  };
+
   return (
     <div id="wd-quizzes">
       <h1>Quizzes</h1>
@@ -56,7 +84,7 @@ export default function Quizzes() {
           </div>
           <ul className="wd-lessons list-group rounded-0">
             {quizzes
-              .filter((quiz: any) => quiz.course === cid)
+              .filter((quiz: any) => quiz.course === cid && (currentUser.role === "STUDENT" ? quiz.published === true : true))
               .map((quiz: any) => (
                 <li
                   id="wd-assignment-list-item"
@@ -86,13 +114,12 @@ export default function Quizzes() {
                       </Link>
                       } 
                       <br />
-                      <b>Not available until</b>{" "}
-                      {quiz.availableDate} |
+                      <b>{getAvailabilityStatus(quiz)}</b>
                       <br />
-                      <b>Due</b> {quiz.dueDate} | {quiz.points} pts
+                      <b>Due</b> {moment(quiz.dueDate).format("YYYY-MM-DD")} | {quiz.points} pts
                       {currentUser.role === "FACULTY" && 
                         <div className="d-flex align-items-center float-end">
-                              <GreenCheckmark />
+                              {quiz.published && <GreenCheckmark />}
                               <IoEllipsisVertical
                               className="fs-4 ms-3"
                               onClick={() => toggleContextMenu(quiz._id)}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import QuizDetailsEditor from "./QuizDetailsEditor";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
@@ -19,12 +19,14 @@ export default function QuizEditor() {
       points: existingQuiz ? existingQuiz.points : 0,
       dueDate: existingQuiz ? existingQuiz.dueDate : "",
       availableDate: existingQuiz ? existingQuiz.availableDate : "",
+      untilDate: existingQuiz ? existingQuiz.untilDate: "",
       instructions: existingQuiz ? existingQuiz.instructions : "",
       quizType: existingQuiz ? existingQuiz.quizType : "GRADED_QUIZ",
       assignmentGroup: existingQuiz ? existingQuiz.assignmentGroup : "QUIZZES",
       shuffleAnswers: existingQuiz ? existingQuiz.shuffleAnswers : true,
       timeLimit: existingQuiz ? existingQuiz.timeLimit : 0,
       multipleAttempts: existingQuiz ? existingQuiz.multipleAttempts : false,
+      howManyAttempts: existingQuiz ? existingQuiz.howManyAttempts : 1,
       showCorrectAnswers: existingQuiz ? existingQuiz.showCorrectAnswers : true,
       accessCode: existingQuiz ? existingQuiz.accessCode : "",
       oneAtATime: existingQuiz ? existingQuiz.oneAtATime : true,
@@ -76,10 +78,10 @@ export default function QuizEditor() {
                 onClick={async () => {
                   if (existingQuiz) {
                       saveQuiz();
-                      navigate(`/Kanbas/Courses/${cid}/Quizzes/${id}`);
+                      navigate(`/Kanbas/Courses/${cid}/Quizzes/${id}/view`);
                   } else {
                       var newQuizID = await createQuiz();
-                      navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizID}`);
+                      navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizID}/view`);
                   }
                 }}
             >

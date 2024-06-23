@@ -4,8 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import * as client from "./client";
 import { addQuiz, updateQuiz } from "./reducer";
+import moment from "moment";
 
-export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: (quiz:any) => void}) {
+export default function QuizDetailsEditor({
+  quiz,
+  setQuiz,
+}: {
+  quiz: any;
+  setQuiz: (quiz: any) => void;
+}) {
   const { cid, id } = useParams();
   const { quizzes } = useSelector((state: any) => state.quizReducer);
   const navigate = useNavigate();
@@ -21,7 +28,7 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             className="form-control"
             value={quiz.title}
             placeholder="New Quiz"
-            onChange={(e) => setQuiz({...quiz, title: e.target.value})}
+            onChange={(e) => setQuiz({ ...quiz, title: e.target.value })}
           />
         </div>
       </div>
@@ -32,7 +39,7 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             id="wd-description"
             className="form-control"
             value={quiz.instructions}
-            onChange={(e) => setQuiz({...quiz, instructions: e.target.value})}
+            onChange={(e) => setQuiz({ ...quiz, instructions: e.target.value })}
             placeholder="Instructions"
           />
         </div>
@@ -44,11 +51,12 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
         </div>
         <div className="col-9">
           <input
+            readOnly
             id="wd-points"
             type="number"
             className="form-control"
             value={quiz.points}
-            onChange={(e) => setQuiz({...quiz, points: e.target.value})}
+            onChange={(e) => setQuiz({ ...quiz, points: e.target.value })}
           />
         </div>
       </div>
@@ -62,7 +70,9 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             id="wd-group"
             className="form-select"
             value={quiz.assignmentGroup}
-            onChange={(e) => setQuiz({...quiz, assignmentGroup: e.target.value})}
+            onChange={(e) =>
+              setQuiz({ ...quiz, assignmentGroup: e.target.value })
+            }
           >
             <option value="QUIZZES">Quizzes</option>
             <option value="EXAMS">Exams</option>
@@ -81,7 +91,7 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             id="wd-quiz-type"
             className="form-select"
             value={quiz.quizType}
-            onChange={(e) => setQuiz({...quiz, quizType: e.target.value})}
+            onChange={(e) => setQuiz({ ...quiz, quizType: e.target.value })}
           >
             <option value="GRADED_QUIZ">Graded Quiz</option>
             <option value="PRACTICE_QUIZ">Practice Quiz</option>
@@ -101,7 +111,9 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="checkbox"
             className="form-check-input"
             checked={quiz.shuffleAnswers}
-            onChange={(e) => setQuiz({...quiz, shuffleAnswers: e.target.checked})}
+            onChange={(e) =>
+              setQuiz({ ...quiz, shuffleAnswers: e.target.checked })
+            }
           />
         </div>
       </div>
@@ -116,7 +128,9 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="number"
             className="form-control"
             value={quiz.timeLimit}
-            onChange={(e) => setQuiz({...quiz, timeLimit: Number(e.target.value)})}
+            onChange={(e) =>
+              setQuiz({ ...quiz, timeLimit: Number(e.target.value) })
+            }
           />
         </div>
       </div>
@@ -131,10 +145,31 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="checkbox"
             className="form-check-input"
             checked={quiz.multipleAttempts}
-            onChange={(e) => setQuiz({...quiz, multipleAttempts: e.target.checked})}
+            onChange={(e) =>
+              setQuiz({ ...quiz, multipleAttempts: e.target.checked })
+            }
           />
         </div>
       </div>
+
+      {quiz.multipleAttempts && (
+        <div className="row mb-3">
+          <div className="col-3 d-flex align-items-center">
+            <label htmlFor="wd-attempts-number">How Many Attempts</label>
+          </div>
+          <div className="col-9">
+            <input
+              id="wd-attempts-number"
+              type="number"
+              className="form-control"
+              value={quiz.howManyAttempts || ""}
+              onChange={(e) =>
+                setQuiz({ ...quiz, howManyAttempts: e.target.value })
+              }
+            />
+          </div>
+        </div>
+      )}
 
       <div className="row mb-3">
         <div className="col-3 d-flex align-items-center">
@@ -146,7 +181,9 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="checkbox"
             className="form-check-input"
             checked={quiz.showCorrectAnswers}
-            onChange={(e) => setQuiz({...quiz, showCorrectAnswers: e.target.checked})}
+            onChange={(e) =>
+              setQuiz({ ...quiz, showCorrectAnswers: e.target.checked })
+            }
           />
         </div>
       </div>
@@ -161,7 +198,7 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="text"
             className="form-control"
             value={quiz.accessCode}
-            onChange={(e) => setQuiz({...quiz, accessCode: e.target.value})}
+            onChange={(e) => setQuiz({ ...quiz, accessCode: e.target.value })}
           />
         </div>
       </div>
@@ -176,14 +213,16 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="checkbox"
             className="form-check-input"
             checked={quiz.oneAtATime}
-            onChange={(e) => setQuiz({...quiz, oneAtATime: e.target.checked})}
+            onChange={(e) => setQuiz({ ...quiz, oneAtATime: e.target.checked })}
           />
         </div>
       </div>
 
       <div className="row mb-3">
         <div className="col-3 d-flex align-items-center">
-          <label htmlFor="wd-webcam-required">Lock Questions After Answering</label>
+          <label htmlFor="wd-webcam-required">
+            Lock Questions After Answering
+          </label>
         </div>
         <div className="col-9">
           <input
@@ -191,7 +230,9 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="checkbox"
             className="form-check-input"
             checked={quiz.lockQuestions}
-            onChange={(e) => setQuiz({...quiz, lockQuestions: e.target.checked})}
+            onChange={(e) =>
+              setQuiz({ ...quiz, lockQuestions: e.target.checked })
+            }
           />
         </div>
       </div>
@@ -206,7 +247,9 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="checkbox"
             className="form-check-input"
             checked={quiz.webcamRequired}
-            onChange={(e) => setQuiz({...quiz, webcamRequired: e.target.checked})}
+            onChange={(e) =>
+              setQuiz({ ...quiz, webcamRequired: e.target.checked })
+            }
           />
         </div>
       </div>
@@ -234,8 +277,10 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="date"
             id="wd-due-date"
             className="form-control"
-            value={quiz.due_date}
-            onChange={(e) => setQuiz({...quiz, dueDate: e.target.value})}
+            value={quiz.dueDate ? moment(quiz.dueDate).format("YYYY-MM-DD") : ""}
+            onChange={(e) =>
+              setQuiz({ ...quiz, dueDate: moment.utc(e.target.value).toDate() })
+            }
           />
         </div>
       </div>
@@ -249,8 +294,10 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="date"
             id="wd-available-from"
             className="form-control"
-            value={quiz.availableDate}
-            onChange={(e) => setQuiz({...quiz, availableDate: e.target.value})}
+            value={quiz.availableDate ? moment(quiz.availableDate).format("YYYY-MM-DD") : ""}
+            onChange={(e) =>
+              setQuiz({ ...quiz, availableDate: moment.utc(e.target.value).toDate() })
+            }
           />
         </div>
 
@@ -260,8 +307,10 @@ export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: 
             type="date"
             id="wd-available-until"
             className="form-control"
-            value={quiz.untilDate}
-            onChange={(e) => setQuiz({...quiz, untilDate: e.target.value})}
+            value={quiz.untilDate ? moment(quiz.untilDate).format("YYYY-MM-DD") : ""}
+            onChange={(e) =>
+              setQuiz({ ...quiz, untilDate: moment.utc(e.target.value).toDate() })
+            }
           />
         </div>
       </div>
