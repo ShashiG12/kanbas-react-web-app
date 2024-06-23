@@ -1,4 +1,5 @@
 import Dashboard from "./Dashboard";
+import CourseEnrollment from "./Dashboard/CourseEnrollment"
 import KanbasNavigation from "./Navigation";
 import { Routes, Route, Navigate } from "react-router";
 import Courses from "./Courses";
@@ -6,7 +7,7 @@ import "./styles.css";
 import * as client from "./Courses/client";
 import { useEffect, useState } from "react";
 import store from "./store";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import Account from "./Account";
 import ProtectedRoute from "./ProtectedRoutes";
 
@@ -25,13 +26,11 @@ export default function Kanbas() {
     startDate: "2023-09-10",
     endDate: "2023-12-15",
     description: "New Description",
+    image:"images/NEU.png",
+    faculty: []
   });
   const addNewCourse = async () => {
     const newCourse = await client.createCourse(course);
-    // setCourses([
-    //   ...courses,
-    //   { ...course, _id: new Date().getTime().toString(), image:"images/NEU.png"},
-    // ]);
     setCourses([
       ...courses,
       { ...course, _id: newCourse._id, image:"images/NEU.png"},
@@ -71,7 +70,7 @@ export default function Kanbas() {
                 element={
                   <ProtectedRoute><Dashboard
                     courses={courses}
-                    course={course}
+                    outsideCourse={course}
                     setCourse={setCourse}
                     addNewCourse={addNewCourse}
                     deleteCourse={deleteCourse}
@@ -79,6 +78,7 @@ export default function Kanbas() {
                   /></ProtectedRoute>
                 }
               />
+              <Route path="Dashboard/Enroll" element={<ProtectedRoute><CourseEnrollment courses = {courses} setCourses={setCourses}/></ProtectedRoute>}/>
               <Route
                 path="Courses/:cid/*"
                 element={<ProtectedRoute><Courses courses={courses} /></ProtectedRoute>}

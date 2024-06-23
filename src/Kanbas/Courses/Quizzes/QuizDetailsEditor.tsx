@@ -5,42 +5,12 @@ import { Link } from "react-router-dom";
 import * as client from "./client";
 import { addQuiz, updateQuiz } from "./reducer";
 
-export default function QuizDetailsEditor() {
+export default function QuizDetailsEditor({quiz, setQuiz} : {quiz:any, setQuiz: (quiz:any) => void}) {
   const { cid, id } = useParams();
   const { quizzes } = useSelector((state: any) => state.quizReducer);
   const navigate = useNavigate();
   const existingQuiz = quizzes.find((quiz: any) => quiz._id === id);
   const dispatch = useDispatch();
-
-  const [title, setTitle] = useState(existingQuiz ? existingQuiz.title : "New Quiz");
-  const [course, setCourse] = useState(existingQuiz ? existingQuiz.course : cid);
-  const [points, setPoints] = useState(existingQuiz ? existingQuiz.points : 0);
-  const [dueDate, setDueDate] = useState(existingQuiz ? existingQuiz.dueDate : "");
-  const [untilDate, setUntilDate] = useState(existingQuiz ? existingQuiz.untilDate : "");
-  const [availableDate, setAvailableDate] = useState(existingQuiz ? existingQuiz.availableDate : "");
-  const [numQuestions, setNumQuestions] = useState(existingQuiz ? existingQuiz.numQuestions : 0);
-  const [instructions, setInstructions] = useState(existingQuiz ? existingQuiz.instructions : "");
-  const [quizType, setQuizType] = useState(existingQuiz ? existingQuiz.quizType : "GRADED_QUIZ");
-  const [assignmentGroup, setAssignmentGroup] = useState(existingQuiz ? existingQuiz.assignmentGroup : "QUIZZES");
-  const [shuffleAnswers, setShuffleAnswers] = useState(existingQuiz ? existingQuiz.shuffleAnswers : false);
-  const [timeLimit, setTimeLimit] = useState(existingQuiz ? existingQuiz.timeLimit : 0);
-  const [multipleAttempts, setMultipleAttempts] = useState(existingQuiz ? existingQuiz.multipleAttempts : false);
-  const [showCorrectAnswers, setShowCorrectAnswers] = useState(existingQuiz ? existingQuiz.showCorrectAnswers : "");
-  const [accessCode, setAccessCode] = useState(existingQuiz ? existingQuiz.accessCode : "");
-  const [oneAtATime, setOneAtATime] = useState(existingQuiz ? existingQuiz.oneAtATime : true);
-  const [webcamRequired, setWebcamRequired] = useState(existingQuiz ? existingQuiz.webcamRequired : false);
-  const [lockQuestions, setLockQuestions] = useState(existingQuiz ? existingQuiz.lockQuestions : false);
-
-  const createQuiz = async (quiz: any) => {
-    const newQuiz = await client.createQuiz(cid as string, quiz);
-    dispatch(addQuiz(newQuiz));
-    return newQuiz._id;
-  };
-
-  const saveQuiz = async (quiz: any) => {
-    const status = await client.updateQuiz(quiz);
-    dispatch(updateQuiz(quiz));
-  };
 
   return (
     <div id="wd-quizzes-editor" className="container">
@@ -49,9 +19,9 @@ export default function QuizDetailsEditor() {
           <input
             id="wd-name"
             className="form-control"
-            value={title}
+            value={quiz.title}
             placeholder="New Quiz"
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => setQuiz({...quiz, title: e.target.value})}
           />
         </div>
       </div>
@@ -61,8 +31,8 @@ export default function QuizDetailsEditor() {
           <textarea
             id="wd-description"
             className="form-control"
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
+            value={quiz.instructions}
+            onChange={(e) => setQuiz({...quiz, instructions: e.target.value})}
             placeholder="Instructions"
           />
         </div>
@@ -77,8 +47,8 @@ export default function QuizDetailsEditor() {
             id="wd-points"
             type="number"
             className="form-control"
-            value={points}
-            onChange={(e) => setPoints(Number(e.target.value))}
+            value={quiz.points}
+            onChange={(e) => setQuiz({...quiz, points: e.target.value})}
           />
         </div>
       </div>
@@ -91,8 +61,8 @@ export default function QuizDetailsEditor() {
           <select
             id="wd-group"
             className="form-select"
-            value={assignmentGroup}
-            onChange={(e) => setAssignmentGroup(e.target.value)}
+            value={quiz.assignmentGroup}
+            onChange={(e) => setQuiz({...quiz, assignmentGroup: e.target.value})}
           >
             <option value="QUIZZES">Quizzes</option>
             <option value="EXAMS">Exams</option>
@@ -110,8 +80,8 @@ export default function QuizDetailsEditor() {
           <select
             id="wd-quiz-type"
             className="form-select"
-            value={quizType}
-            onChange={(e) => setQuizType(e.target.value)}
+            value={quiz.quizType}
+            onChange={(e) => setQuiz({...quiz, quizType: e.target.value})}
           >
             <option value="GRADED_QUIZ">Graded Quiz</option>
             <option value="PRACTICE_QUIZ">Practice Quiz</option>
@@ -130,8 +100,8 @@ export default function QuizDetailsEditor() {
             id="wd-shuffle-answers"
             type="checkbox"
             className="form-check-input"
-            checked={shuffleAnswers}
-            onChange={(e) => setShuffleAnswers(e.target.checked)}
+            checked={quiz.shuffleAnswers}
+            onChange={(e) => setQuiz({...quiz, shuffleAnswers: e.target.checked})}
           />
         </div>
       </div>
@@ -145,8 +115,8 @@ export default function QuizDetailsEditor() {
             id="wd-time-limit"
             type="number"
             className="form-control"
-            value={timeLimit}
-            onChange={(e) => setTimeLimit(Number(e.target.value))}
+            value={quiz.timeLimit}
+            onChange={(e) => setQuiz({...quiz, timeLimit: Number(e.target.value)})}
           />
         </div>
       </div>
@@ -160,8 +130,8 @@ export default function QuizDetailsEditor() {
             id="wd-multiple-attempts"
             type="checkbox"
             className="form-check-input"
-            checked={multipleAttempts}
-            onChange={(e) => setMultipleAttempts(e.target.checked)}
+            checked={quiz.multipleAttempts}
+            onChange={(e) => setQuiz({...quiz, multipleAttempts: e.target.checked})}
           />
         </div>
       </div>
@@ -173,10 +143,10 @@ export default function QuizDetailsEditor() {
         <div className="col-9">
           <input
             id="wd-show-correct-answers"
-            type="date"
-            className="form-control"
-            value={showCorrectAnswers}
-            onChange={(e) => setShowCorrectAnswers(e.target.value)}
+            type="checkbox"
+            className="form-check-input"
+            checked={quiz.showCorrectAnswers}
+            onChange={(e) => setQuiz({...quiz, showCorrectAnswers: e.target.checked})}
           />
         </div>
       </div>
@@ -190,8 +160,8 @@ export default function QuizDetailsEditor() {
             id="wd-access-code"
             type="text"
             className="form-control"
-            value={accessCode}
-            onChange={(e) => setAccessCode(e.target.value)}
+            value={quiz.accessCode}
+            onChange={(e) => setQuiz({...quiz, accessCode: e.target.value})}
           />
         </div>
       </div>
@@ -205,8 +175,8 @@ export default function QuizDetailsEditor() {
             id="wd-one-at-a-time"
             type="checkbox"
             className="form-check-input"
-            checked={oneAtATime}
-            onChange={(e) => setOneAtATime(e.target.checked)}
+            checked={quiz.oneAtATime}
+            onChange={(e) => setQuiz({...quiz, oneAtATime: e.target.checked})}
           />
         </div>
       </div>
@@ -220,8 +190,8 @@ export default function QuizDetailsEditor() {
             id="wd-lock-questions"
             type="checkbox"
             className="form-check-input"
-            checked={lockQuestions}
-            onChange={(e) => setLockQuestions(e.target.checked)}
+            checked={quiz.lockQuestions}
+            onChange={(e) => setQuiz({...quiz, lockQuestions: e.target.checked})}
           />
         </div>
       </div>
@@ -235,8 +205,8 @@ export default function QuizDetailsEditor() {
             id="wd-webcam-required"
             type="checkbox"
             className="form-check-input"
-            checked={webcamRequired}
-            onChange={(e) => setWebcamRequired(e.target.checked)}
+            checked={quiz.webcamRequired}
+            onChange={(e) => setQuiz({...quiz, webcamRequired: e.target.checked})}
           />
         </div>
       </div>
@@ -264,8 +234,8 @@ export default function QuizDetailsEditor() {
             type="date"
             id="wd-due-date"
             className="form-control"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
+            value={quiz.due_date}
+            onChange={(e) => setQuiz({...quiz, dueDate: e.target.value})}
           />
         </div>
       </div>
@@ -279,8 +249,8 @@ export default function QuizDetailsEditor() {
             type="date"
             id="wd-available-from"
             className="form-control"
-            value={availableDate}
-            onChange={(e) => setAvailableDate(e.target.value)}
+            value={quiz.availableDate}
+            onChange={(e) => setQuiz({...quiz, availableDate: e.target.value})}
           />
         </div>
 
@@ -290,52 +260,9 @@ export default function QuizDetailsEditor() {
             type="date"
             id="wd-available-until"
             className="form-control"
-            value={untilDate}
-            onChange={(e) => setUntilDate(e.target.value)}
+            value={quiz.untilDate}
+            onChange={(e) => setQuiz({...quiz, untilDate: e.target.value})}
           />
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-12">
-          <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
-            <button className="btn btn-secondary me-2">Cancel</button>
-          </Link>
-            <button
-                className="btn btn-danger"
-                onClick={async () => {
-                const quiz = {
-                    _id: id,
-                    title,
-                    course,
-                    points,
-                    dueDate,
-                    untilDate,
-                    availableDate,
-                    numQuestions,
-                    instructions,
-                    quizType,
-                    assignmentGroup,
-                    shuffleAnswers,
-                    timeLimit,
-                    multipleAttempts,
-                    showCorrectAnswers,
-                    accessCode,
-                    oneAtATime,
-                    webcamRequired,
-                    lockQuestions,
-                    published:false
-                };
-                if (existingQuiz) {
-                    saveQuiz(quiz);
-                } else {
-                    var newQuizID = await createQuiz(quiz);
-                    navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizID}`);
-                }
-                }}
-            >
-                Save
-            </button>
         </div>
       </div>
     </div>

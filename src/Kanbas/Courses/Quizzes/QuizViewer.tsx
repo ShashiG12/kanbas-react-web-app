@@ -4,6 +4,7 @@ import { useParams } from "react-router";
 import { useSelector } from "react-redux";
 import { FaPencil } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import QuizTaker from "./QuizTaker";
 export default function QuizViewer() {
     const { cid, id } = useParams();
     const { quizzes } = useSelector((state: any) => state.quizReducer);
@@ -18,9 +19,11 @@ export default function QuizViewer() {
   return (
     <div id="wd-quiz-viewer" className="container">
         <div className="ms-auto d-flex">
-            <button className="btn btn-secondary d-flex align-items-center me-5">
-                Preview
-            </button>
+            <Link to={`/Kanbas/Courses/${cid}/Quizzes/${id}`}>
+              <button className="btn btn-secondary d-flex align-items-center me-5">
+                  Preview
+              </button>
+            </Link>
             <Link to={`/Kanbas/Courses/${cid}/Quizzes/${id}/edit`}>
                 <button className="btn btn-secondary d-flex align-items-center me-5">
                     <FaPencil/>
@@ -43,7 +46,7 @@ export default function QuizViewer() {
         <li><b>Shuffle Answers:</b> {existingQuiz.shuffleAnswers ? "Yes" : "No"}</li>
         <li><b>Time Limit:</b> {existingQuiz.timeLimit} minutes</li>
         <li><b>Multiple Attempts:</b> {existingQuiz.multipleAttempts ? "Allowed" : "Not Allowed"}</li>
-        <li><b>Show Correct Answers:</b> {existingQuiz.showCorrectAnswers ? formatDate(existingQuiz.showCorrectAnswers) : "Not shown"}</li>
+        <li><b>Show Correct Answers:</b> {existingQuiz.showCorrectAnswers ? "Yes" : "No"}</li>
         <li><b>Access Code:</b> {existingQuiz.accessCode}</li>
         <li><b>One At A Time:</b> {existingQuiz.oneAtATime ? "Yes" : "No"}</li>
         <li><b>Webcam Required:</b> {existingQuiz.webcamRequired ? "Yes" : "No"}</li>

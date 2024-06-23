@@ -1,0 +1,49 @@
+.course-enrollment-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .course-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    width: calc(33.333% - 40px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .course-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .course-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .course-description {
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  
+  .enrollment-status {
+    font-size: 0.9rem;
+    color: #28a745;
+    margin-bottom: 10px;
+  }
+  
+  .btn {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+  }
+
+  .read-more {
+    color: blue;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  

@@ -15,6 +15,7 @@ export default function QuizOuterControls({
   const { cid } = useParams();
   const dispatch = useDispatch();
   const { quizzes } = useSelector((state: any) => state.quizReducer);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   return (
     <div className="d-flex align-items-center mb-3">
@@ -33,6 +34,7 @@ export default function QuizOuterControls({
           placeholder="Search..."
         />
       </div>
+      {currentUser.role === "FACULTY" &&
       <div className="ms-auto d-flex">
         <button
           className="btn btn-danger d-flex align-items-center me-5"
@@ -46,6 +48,7 @@ export default function QuizOuterControls({
           </Link>
         </button>
       </div>
+      }
     </div>
   );
 }

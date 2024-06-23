@@ -20,6 +20,7 @@ export default function Quizzes() {
     const quizzes = await client.findQuizzesForCourse(cid as string);
     dispatch(setQuizzes(quizzes));
   };
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const createQuiz = async (quiz: any) => {
     const newQuiz = await client.createQuiz(cid as string, quiz);
@@ -66,6 +67,16 @@ export default function Quizzes() {
                   <div className="row">
                     <div className="col ps-2">
                       <MdOutlineAssignment className="text-success me-2" />
+                      {currentUser.role === "FACULTY" && 
+                      <Link
+                        to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}/view`}
+                        className="wd-assignment-link text-dark"
+                        style={{ textDecoration: "none" }}
+                      >
+                        <b>{quiz.title}</b>
+                      </Link>
+                      } 
+                      {currentUser.role === "STUDENT" && 
                       <Link
                         to={`/Kanbas/Courses/${cid}/Quizzes/${quiz._id}`}
                         className="wd-assignment-link text-dark"
@@ -73,27 +84,30 @@ export default function Quizzes() {
                       >
                         <b>{quiz.title}</b>
                       </Link>
+                      } 
                       <br />
                       <b>Not available until</b>{" "}
                       {quiz.availableDate} |
                       <br />
                       <b>Due</b> {quiz.dueDate} | {quiz.points} pts
-                      <div className="d-flex align-items-center float-end">
-                            <GreenCheckmark />
-                            <IoEllipsisVertical
-                            className="fs-4 ms-3"
-                            onClick={() => toggleContextMenu(quiz._id)}
-                            style={{ cursor: "pointer" }}
-                            id={`dropdown-menu-${quiz._id}`}
-                            data-bs-toggle="dropdown"
-                            aria-expanded={activeQuizId === quiz._id}
-                            />
-                            <ul className={`dropdown-menu dropdown-menu-end ${activeQuizId === quiz._id ? "show" : ""}`} aria-labelledby={`dropdown-menu-${quiz._id}`}>
-                            <li onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${activeQuizId}/edit`)} className="dropdown-item">Edit</li>
-                            <li onClick={() => removeQuiz(activeQuizId)} className="dropdown-item">Delete</li>
-                            <li onClick={() => saveQuiz({ ...quiz, published: !quiz.published })} className="dropdown-item">{quiz.published ? "Unpublish" : "Publish"}</li>
-                            </ul>
-                        </div>
+                      {currentUser.role === "FACULTY" && 
+                        <div className="d-flex align-items-center float-end">
+                              <GreenCheckmark />
+                              <IoEllipsisVertical
+                              className="fs-4 ms-3"
+                              onClick={() => toggleContextMenu(quiz._id)}
+                              style={{ cursor: "pointer" }}
+                              id={`dropdown-menu-${quiz._id}`}
+                              data-bs-toggle="dropdown"
+                              aria-expanded={activeQuizId === quiz._id}
+                              />
+                              <ul className={`dropdown-menu dropdown-menu-end ${activeQuizId === quiz._id ? "show" : ""}`} aria-labelledby={`dropdown-menu-${quiz._id}`}>
+                              <li onClick={() => navigate(`/Kanbas/Courses/${cid}/Quizzes/${activeQuizId}/edit`)} className="dropdown-item">Edit</li>
+                              <li onClick={() => removeQuiz(activeQuizId)} className="dropdown-item">Delete</li>
+                              <li onClick={() => saveQuiz({ ...quiz, published: !quiz.published })} className="dropdown-item">{quiz.published ? "Unpublish" : "Publish"}</li>
+                              </ul>
+                          </div>
+                      }
                     </div>
                   </div>
                 </li>

@@ -1,190 +1,297 @@
 import React, { useState } from "react";
-import { useParams } from "react-router";
-import * as db from "../../Database";
-import { addQuiz, editQuiz, updateQuiz } from "./reducer";
+import { useNavigate, useParams } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import * as client from "./client";
+import { addQuiz, updateQuiz } from "./reducer";
+import { FaPlus } from "react-icons/fa";
+import "./quiz.css";
 
-export default function QuizQuestionsEditor() {
+export default function QuizDetailsEditor({
+  quiz,
+  setQuiz,
+}: {
+  quiz: any;
+  setQuiz: (quiz: any) => void;
+}) {
   const { cid, id } = useParams();
-
   const { quizzes } = useSelector((state: any) => state.quizReducer);
-  const existingQuiz = quizzes.find((quiz : any) => quiz._id === id);
+  const navigate = useNavigate();
+  const existingQuiz = quizzes.find((quiz: any) => quiz._id === id);
   const dispatch = useDispatch();
 
-  const [title, setTitle] = useState(existingQuiz ? existingQuiz.title : "");
-  const [course, setCourse] = useState(existingQuiz ? existingQuiz.course : "");
-  const [points, setPoints] = useState(existingQuiz ? existingQuiz.points : 0);
-  const [dueDate, setDueDate] = useState(existingQuiz ? existingQuiz.dueDate : "");
-  const [untilDate, setUntilDate] = useState(existingQuiz ? existingQuiz.untilDate : "");
-  const [availableDate, setAvailableDate] = useState(existingQuiz ? existingQuiz.availableDate : "");
-  const [numQuestions, setNumQuestions] = useState(existingQuiz ? existingQuiz.numQuestions : 0);
-  const [instructions, setInstructions] = useState(existingQuiz ? existingQuiz.instructions : 0);
-  const [quizType, setQuizType] = useState(existingQuiz ? existingQuiz.quizType : "");
-  const [assignmentGroup, setAssignmentGroup] = useState(existingQuiz ? existingQuiz.assignmentGroup : "");
-  const [shuffleAnswers, setShuffleAnswers] = useState(existingQuiz ? existingQuiz.shuffleAnswers : "");
-  const [timeLimit, setTimeLimit] = useState(existingQuiz ? existingQuiz.timeLimit : 0);
-  const [multipleAttempts, setMultipleAttempts] = useState(existingQuiz ? existingQuiz.multipleAttempts : false);
-  const [showCorrectAnswers, setShowCorrectAnswers] = useState(existingQuiz ? existingQuiz.showCorrectAnswers : null);
-  const [accessCode, setAccessCode] = useState(existingQuiz ? existingQuiz.accessCode : "");
-  const [oneAtATime, setOneAtATime] = useState(existingQuiz ? existingQuiz.oneAtATime : true);
-  const [webcamRequired, setWebcamRequired] = useState(existingQuiz ? existingQuiz.webcamRequired : false);
-
-  const createQuiz = async (quiz: any) => {
-    const newQuiz = await client.createQuiz(cid as string, quiz);
-    dispatch(addQuiz(newQuiz));
-  }
-  const saveQuiz = async (quiz: any) => {
-    const status = await client.updateQuiz(quiz);
-    dispatch(updateQuiz(quiz));
+  const [showAddQuestion, setShowAddQuestion] = useState(false);
+  const initialQuestion: {
+    title: string;
+    type: string;
+    points: number;
+    question: string;
+    choices: { text: string; correct: boolean }[];
+    correctAnswer: boolean;
+    blankAnswers: string[];
+  } = {
+    title: "New Question",
+    type: "CHOICE",
+    points: 0,
+    question: "",
+    choices: [],
+    correctAnswer: true,
+    blankAnswers: [],
   };
-
+  const [newQuestion, setNewQuestion] = useState(initialQuestion);
+  const saveQuestion = () => {
+    setShowAddQuestion(false);
+    setQuiz({ ...quiz, questions: [...quiz.questions, newQuestion] });
+  };
+  const cancelQuestion = () => {
+    setShowAddQuestion(false);
+    setNewQuestion(initialQuestion);
+  };
+  const addAnswer = () => {
+    setNewQuestion({
+      ...newQuestion,
+      choices: [...newQuestion.choices, { text: "", correct: false }],
+    });
+  };
+  const addBlankAnswer = () => {
+    setNewQuestion({
+      ...newQuestion,
+      blankAnswers: [...newQuestion.blankAnswers, ""],
+    });
+  };
   
+
   return (
-    <div id="wd-quizzes-editor" className="container">
-      <div>
-      <div className="row mb-3">
-        <div className="col-9">
-          <input id="wd-name" className="form-control" value={title} placeholder="New Quiz"
-          onChange={(e) => {setTitle(e.target.value)}}/>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-9">
-          <textarea id="wd-description" className="form-control"
-          onChange={(e) => setInstructions(e.target.value)}>
-            {instructions}
-          </textarea>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-          <label htmlFor="wd-points">Points</label>
-        </div>
-        <div className="col-9">
-          <input id="wd-points" className="form-control" value={points} 
-          onChange={(e) => setPoints(e.target.value)}/>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-          <label htmlFor="wd-group">Assignment Group</label>
-        </div>
-        <div className="col-9">
-          <select id="wd-group" className="form-select">
-            <option value="ASSIGNMENTS">Assignments</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-          <label htmlFor="wd-display-grade-as">Display Grade As</label>
-        </div>
-        <div className="col-9">
-          <select id="wd-display-grade-as" className="form-select">
-            <option value="PERCENTAGE">Percentage</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-          <label htmlFor="wd-submission-type">Submission Type</label>
-        </div>
-        <div className="col-9">
-          <select id="wd-submission-type" className="form-select">
-            <option value="ONLINE">Online</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-        </div>
-        <div className="col-9">
-          <label>Online Entry Options</label>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="wd-text-entry" />
-            <label className="form-check-label" htmlFor="wd-text-entry">Text Entry</label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="wd-website-url" />
-            <label className="form-check-label" htmlFor="wd-website-url">Website URL</label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="wd-media-recordings" />
-            <label className="form-check-label" htmlFor="wd-media-recordings">Media Recordings</label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="wd-student-annotation" />
-            <label className="form-check-label" htmlFor="wd-student-annotation">Student Annotation</label>
-          </div>
-          <div className="form-check">
-            <input className="form-check-input" type="checkbox" id="wd-file-upload" />
-            <label className="form-check-label" htmlFor="wd-file-upload">File Uploads</label>
-          </div>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-        <label>Assign</label>
-        </div>
-        <div className="col-9">
-        <label htmlFor="wd-assign-to">Assign To</label>
-          <input id="wd-assign-to" className="form-control" defaultValue="Everyone" />
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-        </div>
-        <div className="col-9">
-        <label htmlFor="wd-due-date">Due</label>
-          <input type="date" id="wd-due-date" className="form-control" value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}/>
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-3 d-flex align-items-center">
-        </div>
-        <div className="col-3">
-        <label htmlFor="wd-available-from">Available from</label>
-          <input type="date" id="wd-available-from" className="form-control" value={availableDate}
-          onChange={(e) => setAvailableDate(e.target.value)}/>
-        </div>
-
-        <div className="col-3">
-        <label htmlFor="wd-available-until">Until</label>
-          <input type="date" id="wd-available-until" className="form-control" />
-        </div>
-      </div>
-
-      <div className="row mb-3">
-        <div className="col-12">
-          <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
-            <button className="btn btn-secondary me-2">Cancel</button>
-          </Link>
-          <Link to={`/Kanbas/Courses/${cid}/Quizzes`}>
-            <button className="btn btn-danger"
-            onClick={() => {
-              if (existingQuiz) {
-                saveQuiz({ _id:id, title, course: cid, instructions, points, dueDate, availableDate });
-              } else {
-                console.log("added")
-                createQuiz({title:"New Quiz", course:cid as String});
+    <div id="wd-quizzes-question-editor" className="container">
+      {quiz.questions.map((question: any) => (
+        <div className="container question-card">
+          <h3>{question.title}</h3>
+          <p>
+            <b>Type: </b>
+            {(() => {
+              switch (question.type) {
+                case "CHOICE":
+                  return "Multiple Choice";
+                case "TF":
+                  return "True/False";
+                case "BLANKS":
+                  return "Fill in the Blanks";
+                default:
+                  return question.type;
               }
-            }}
-            >Save</button>
-          </Link>
+            })()}
+          </p>
+          <b>Question:</b>
+          <p>{question.question}</p>
+          {question.type === "CHOICE" && (
+            <>
+              <b>Answers:</b>
+              <ul>
+                {question.choices.map((choice: any, index: number) => (
+                  <li
+                    key={index}
+                    style={{ color: choice.correct ? "green" : "black" }}
+                  >
+                    {choice.text}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {question.type === "TF" && (
+            <>
+              <b>Answers:</b>
+              <ul>
+                <li
+                  style={{ color: question.correctAnswer ? "green" : "black" }}
+                >
+                  True
+                </li>
+                <li
+                  style={{ color: !question.correctAnswer ? "green" : "black" }}
+                >
+                  False
+                </li>
+              </ul>
+            </>
+          )}
+          {question.type === "BLANKS" && (
+            <>
+              <b>Possible Answers:</b>
+              <ul>
+                {question.blankAnswers.map((possibleAnswer: any) => (
+                  <li>{possibleAnswer}</li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
-      </div>
+      ))}
+      <div className="row mb-3 justify-content-center">
+        {showAddQuestion && (
+          <div className="container question-card">
+            <div className="d-flex">
+              <input
+                className="form-control me-2"
+                onChange={(e) =>
+                  setNewQuestion({ ...newQuestion, title: e.target.value })
+                }
+              />
+              <select
+                className="form-control me-2"
+                value={newQuestion.type}
+                onChange={(e) =>
+                  setNewQuestion({ ...newQuestion, type: e.target.value })
+                }
+              >
+                <option value="CHOICE">Multiple Choice</option>
+                <option value="TF">True/False</option>
+                <option value="BLANKS">Fill in the Blanks</option>
+              </select>
+              <label>pts:</label>
+              <input
+                className="form-control"
+                onChange={(e) =>
+                  setNewQuestion({
+                    ...newQuestion,
+                    points: Number(e.target.value),
+                  })
+                }
+              ></input>
+            </div>
+            <div className="d-flex">
+              <label>Question:</label>
+              <textarea
+                className="form-control"
+                onChange={(e) =>
+                  setNewQuestion({ ...newQuestion, question: e.target.value })
+                }
+              >
+                {newQuestion.question}
+              </textarea>
+            </div>
+            {newQuestion.type === "CHOICE" && (
+              <>
+                <div className="d-flex">
+                  <button className="btn btn-secondary" onClick={addAnswer}>
+                    <FaPlus />
+                    Add Answer
+                  </button>
+                </div>
+                {newQuestion.choices.map((choice: any, index) => (
+                  <div className="d-flex">
+                    Possible Answer:
+                    <input
+                      className="form-control"
+                      value={choice.text}
+                      onChange={(e) =>
+                        setNewQuestion((prevQuestion) => ({
+                          ...prevQuestion,
+                          choices: prevQuestion.choices.map((prevChoice, idx) =>
+                            idx === index
+                              ? { ...prevChoice, text: e.target.value }
+                              : prevChoice
+                          ),
+                        }))
+                      }
+                    />
+                    <label>
+                      Correct Answer:
+                      <input
+                        type="checkbox"
+                        checked={choice.correct}
+                        onChange={(e) =>
+                          setNewQuestion((prevQuestion) => ({
+                            ...prevQuestion,
+                            choices: prevQuestion.choices.map(
+                              (prevChoice, idx) =>
+                                idx === index
+                                  ? { ...prevChoice, correct: e.target.checked }
+                                  : { ...prevChoice, correct: false }
+                            ),
+                          }))
+                        }
+                      />
+                    </label>
+                  </div>
+                ))}
+              </>
+            )}
+            {newQuestion.type === "TF" && (
+              <div className="d-flex">
+                <div className="d-flex">
+                  Correct Answer:
+                  <select
+                    className="form-control me-2"
+                    value={String(newQuestion.correctAnswer)}
+                    onChange={(e) =>
+                      setNewQuestion({
+                        ...newQuestion,
+                        correctAnswer: e.target.value === "true",
+                      })
+                    }
+                  >
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                  </select>
+                </div>
+              </div>
+            )}
+            {newQuestion.type === "BLANKS" && (
+              <div>
+                <div className="d-flex">
+                  <button
+                    className="btn btn-secondary"
+                    onClick={addBlankAnswer}
+                  >
+                    <FaPlus />
+                    Add Answer
+                  </button>
+                </div>
+                {newQuestion.blankAnswers.map(
+                  (answer: string, index: number) => (
+                    <div key={index}>
+                      Possible Answer:
+                      <input
+                        className="form-control"
+                        value={answer}
+                        onChange={(e) =>
+                          setNewQuestion((prevQuestion) => ({
+                            ...prevQuestion,
+                            blankAnswers: prevQuestion.blankAnswers.map(
+                              (prevAnswer, idx) =>
+                                idx === index ? e.target.value : prevAnswer
+                            ),
+                          }))
+                        }
+                      />
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+            <div className="d-flex">
+              <button
+                className="btn btn-secondary me-2"
+                onClick={cancelQuestion}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-danger" onClick={saveQuestion}>
+                Save
+              </button>
+            </div>
+          </div>
+        )}
+        <div className="col-6 text-center">
+          <button
+            className="btn btn-secondary me-5"
+            onClick={() => setShowAddQuestion(true)}
+          >
+            <FaPlus />
+            New Question
+          </button>
+        </div>
       </div>
     </div>
   );
