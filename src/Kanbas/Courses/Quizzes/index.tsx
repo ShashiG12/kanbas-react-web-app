@@ -5,7 +5,7 @@ import * as client from "./client";
 import { useNavigate, useParams } from "react-router";
 import { addQuiz, deleteQuiz, setQuizzes, updateQuiz } from "./reducer";
 import { BsGripVertical } from "react-icons/bs";
-import { MdOutlineAssignment } from "react-icons/md";
+import { MdDoNotDisturb, MdOutlineAssignment } from "react-icons/md";
 import { Link } from "react-router-dom";
 import GreenCheckmark from "../Modules/GreenCheckmark";
 import { IoEllipsisVertical } from "react-icons/io5";
@@ -57,11 +57,10 @@ export default function Quizzes() {
 
   const getAvailabilityStatus = (quiz: any) => {
     const availableDate = new Date(quiz.availableDate);
-    const availableUntilDate = new Date(quiz.availableUntilDate);
+    const availableUntilDate = new Date(quiz.untilDate);
     const dueDate = new Date(quiz.dueDate);
 
     const currentDate = new Date();
-    console.log(availableUntilDate)
     if (currentDate > availableUntilDate) {
       return "Closed";
     } else if (currentDate >= availableDate && currentDate <= availableUntilDate) {
@@ -69,7 +68,7 @@ export default function Quizzes() {
     } else if (currentDate < availableDate) {
       return `Not available until ${formatDateString(quiz.availableDate)}`;
     } else {
-      return "";
+      return "Closed";
     }
   };
 
@@ -119,7 +118,7 @@ export default function Quizzes() {
                       <b>Due</b> {moment(quiz.dueDate).format("YYYY-MM-DD")} | {quiz.points} pts
                       {currentUser.role === "FACULTY" && 
                         <div className="d-flex align-items-center float-end">
-                              {quiz.published && <GreenCheckmark />}
+                              {quiz.published ? <GreenCheckmark /> : <MdDoNotDisturb color="red"/>}
                               <IoEllipsisVertical
                               className="fs-4 ms-3"
                               onClick={() => toggleContextMenu(quiz._id)}
@@ -142,6 +141,11 @@ export default function Quizzes() {
           </ul>
         </li>
       </ul>
+      {quizzes.length === 0 ? (
+              <div className="alert alert-danger col-2 text-center mx-auto">
+                  Add a quiz to get started!
+              </div>
+              ) : <></>}
     </div>
   );
 }

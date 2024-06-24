@@ -31,6 +31,7 @@ export default function QuizViewer() {
                 </button>
             </Link>
         </div>
+        <hr className="my-2" style={{ borderColor: "#ccc" }} />
       <h1>
         {existingQuiz.title}
       </h1>

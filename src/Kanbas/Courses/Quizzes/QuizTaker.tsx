@@ -36,6 +36,7 @@ export default function QuizTaker() {
         tfAnswer: typeof answer === "boolean" ? answer : undefined,
         selectedAnswer: typeof answer === "string" ? answer : undefined,
       })),
+      score:calculateScore(answers)
     };
   
     let updatedUserAttempts = quiz.userAttempts ? [...quiz.userAttempts] : [];
@@ -67,47 +68,84 @@ export default function QuizTaker() {
     return user ? user.attempts : [];
   };
 
-  const renderSubmission = (attempt: any, index: number) => (
-    <div key={index} className="submission">
-      <h3>Attempt {index + 1}</h3>
-      {attempt.answers.map((answer: any) => {
-        const question = quiz.questions.find(
-          (q: any) => q._id === answer.questionID
-        );
-        if (!question) return null;
-        return (
-          <div key={question._id} className="question-card">
-            <h4>{question.title}</h4>
-            <p>{question.question}</p>
-            {question.type === "CHOICE" && (
-              <div>
-                <p><b>Selected Answer:</b> {answer.selectedAnswer}</p>
-                {quiz.showCorrectAnswers && (
-                  <p><b>Correct Answer:</b> {question.correctAnswer}</p>
+  const renderSubmission = (attempt: any, index: number) => {
+    const shouldShowAnswers = quiz.showCorrectAnswers && maxAttemptsReached;
+  
+    return (
+      <div key={index} className="submission mb-3 p-3 border rounded">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <h3 className="col-2">Attempt {index + 1}</h3>
+          <h2 className="text-success">
+            Score: {attempt.score ? attempt.score : 0}/{quiz.points}
+          </h2>
+        </div>
+        {attempt.answers.map((answer: any) => {
+          const question = quiz.questions.find(
+            (q: any) => q._id === answer.questionID
+          );
+          if (!question) return null;
+  
+          const isCorrect = question.type === "CHOICE"
+            ? question.choices.find((choice: any) => choice.correct)?.text === answer.selectedAnswer
+            : question.type === "TF"
+            ? question.correctAnswer === answer.tfAnswer
+            : question.blankAnswers.includes(answer.selectedAnswer);
+  
+          const points = isCorrect ? question.points : 0;
+  
+          return (
+            <div key={question._id} className={`question-card mb-3 p-3 border rounded ${isCorrect ? 'border-success' : 'border-danger'}`}>
+              <div className="d-flex justify-content-between align-items-center">
+                <h4>{question.title}</h4>
+                {shouldShowAnswers && (
+                  <p className={isCorrect ? "text-success" : "text-danger"}>
+                    {isCorrect ? `+${points} points` : `0 points`}
+                  </p>
                 )}
               </div>
-            )}
-            {question.type === "TF" && (
-              <div>
-                <p><b>True/False Answer:</b> {answer.tfAnswer ? "True" : "False"}</p>
-                {quiz.showCorrectAnswers && (
-                  <p><b>Correct Answer:</b> {question.correctAnswer ? "True" : "False"}</p>
-                )}
-              </div>
-            )}
-            {question.type === "BLANKS" && (
-              <div>
-                <p><b>Answer:</b> {answer.selectedAnswer}</p>
-                {quiz.showCorrectAnswers && (
-                  <p><b>Correct Answer:</b> {question.correctAnswer}</p>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
+              <p>{question.question}</p>
+              {question.type === "CHOICE" && (
+                <div>
+                  <ul>
+                    {question.choices.map((choice: any, choiceIndex: any) => (
+                       <li
+                       key={choiceIndex}
+                       className={
+                         shouldShowAnswers && choice.text === answer.selectedAnswer
+                           ? choice.correct
+                             ? "text-success"
+                             : "text-danger"
+                           : ""
+                       }
+                     >
+                        {choice.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {question.type === "TF" && (
+                <div>
+                  <p><b>Answer:</b> {answer.tfAnswer ? "True" : "False"}</p>
+                  {shouldShowAnswers && (
+                    <p><b>Correct Answer:</b> {question.correctAnswer ? "True" : "False"}</p>
+                  )}
+                </div>
+              )}
+              {question.type === "BLANKS" && (
+                <div>
+                  <p><b>Answer:</b> {answer.selectedAnswer}</p>
+                  {shouldShowAnswers && (
+                    <p><b>Correct Answers:</b> {question.blankAnswers.join(", ")}</p>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   const userAttempts = getPastSubmissions();
   const maxAttemptsReached = currentUser.role !== "FACULTY" && (
@@ -115,6 +153,27 @@ export default function QuizTaker() {
       ? userAttempts.length >= quiz.howManyAttempts
       : userAttempts.length >= 1
   );
+
+  const calculateScore = (answers: any) => {
+    let score = 0;
+    quiz.questions.forEach((question: any) => {
+      const answer = answers[question._id];
+      if (question.type === "CHOICE") {
+        const correctChoice = question.choices.find((choice: any) => choice.correct);
+        if (answer === correctChoice.text) {
+          score += question.points;
+        }
+      } else if (question.type === "TF" && answer === question.correctAnswer) {
+        score += question.points;
+      } else if (question.type === "BLANKS") {
+        const providedAnswer = Array.isArray(answer) ? answer[0] : answer;
+        if (question.blankAnswers.includes(providedAnswer)) {
+          score += question.points;
+        }
+      }
+    });
+    return score;
+  };
 
   return (
     <div id="quiz-taker" className="container">
@@ -126,7 +185,7 @@ export default function QuizTaker() {
         )}
       <h1>{quiz.title}</h1>
       <h2>{quiz.instructions}</h2>
-      <p>Attempt: {userAttempts.length}/{quiz.howManyAttempts}</p>
+      {currentUser.role === "STUDENT" && <p>Attempt: {userAttempts.length}/{quiz.howManyAttempts}</p>}
       {!isTakingQuiz && !viewingSubmissions ? (
          <div className="text-center">
          {!maxAttemptsReached ? (

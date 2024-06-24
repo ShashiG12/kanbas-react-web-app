@@ -32,18 +32,19 @@ export default function QuizEditor() {
       oneAtATime: existingQuiz ? existingQuiz.oneAtATime : true,
       webcamRequired: existingQuiz ? existingQuiz.webcamRequired : false,
       questions: existingQuiz ? existingQuiz.questions : [],
-      userAttempts: existingQuiz ? existingQuiz.userAttempts: []
+      userAttempts: existingQuiz ? existingQuiz.userAttempts: [],
+      published: existingQuiz ? existingQuiz.published: false
     };
     const [newQuiz, setNewQuiz] = useState(initialQuizState);
 
-    const createQuiz = async () => {
-      const tempQuiz = await client.createQuiz(cid as string, {...newQuiz, course:cid});
+    const createQuiz = async (published:any) => {
+      const tempQuiz = await client.createQuiz(cid as string, {...newQuiz, course:cid, published:published});
       dispatch(addQuiz(tempQuiz));
       return tempQuiz._id;
     };
   
-    const saveQuiz = async () => {
-      const status = await client.updateQuiz({...newQuiz, _id:id, course:cid});
+    const saveQuiz = async (published:any) => {
+      const status = await client.updateQuiz({...newQuiz, _id:id, course:cid, published:published});
       dispatch(updateQuiz({...newQuiz, _id:id, course:cid}));
     };
 
@@ -70,22 +71,36 @@ export default function QuizEditor() {
       <div className="tab-content">
         {activeTab === "details" ? <QuizDetailsEditor quiz={newQuiz} setQuiz={setNewQuiz}/> :  <QuizQuestionsEditor quiz={newQuiz} setQuiz={setNewQuiz}/>}
       </div>
-          <Link to={`/Kanbas/Courses/${cid}/Quizzes/${id}/view`}>
+          <Link to={`/Kanbas/Courses/${cid}/Quizzes/`}>
             <button className="btn btn-secondary me-2">Cancel</button>
           </Link>
             <button
-                className="btn btn-danger"
+                className="btn btn-danger me-2"
                 onClick={async () => {
                   if (existingQuiz) {
-                      saveQuiz();
+                      saveQuiz(false);
                       navigate(`/Kanbas/Courses/${cid}/Quizzes/${id}/view`);
                   } else {
-                      var newQuizID = await createQuiz();
+                      var newQuizID = await createQuiz(false);
                       navigate(`/Kanbas/Courses/${cid}/Quizzes/${newQuizID}/view`);
                   }
                 }}
             >
                 Save
+            </button>
+            <button
+                className="btn btn-danger me-2"
+                onClick={async () => {
+                  if (existingQuiz) {
+                      await saveQuiz(true);
+                      navigate(`/Kanbas/Courses/${cid}/Quizzes/`);
+                  } else {
+                      var newQuizID = await createQuiz(true);
+                      navigate(`/Kanbas/Courses/${cid}/Quizzes/`);
+                  }
+                }}
+            >
+                Save and Publish
             </button>
     </div>
   );

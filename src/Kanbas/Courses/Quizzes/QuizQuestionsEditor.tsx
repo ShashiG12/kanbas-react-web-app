@@ -65,12 +65,27 @@ export default function QuizDetailsEditor({
       choices: [...newQuestion.choices, { text: "", correct: false }],
     });
   };
+
   const addBlankAnswer = () => {
     setNewQuestion({
       ...newQuestion,
       blankAnswers: [...newQuestion.blankAnswers, ""],
     });
   };
+  const removeAnswer = (index: number) => {
+    setNewQuestion({
+      ...newQuestion,
+      choices: newQuestion.choices.filter((choice, idx) => idx !== index),
+    });
+  };
+
+  const removeBlankAnswer = (index: number) => {
+    setNewQuestion({
+      ...newQuestion,
+      blankAnswers: newQuestion.blankAnswers.filter((answer, idx) => idx !== index),
+    });
+  };
+
   const removeQuestion = (index: number) => {
     const updatedQuestions = [...quiz.questions];
     updatedQuestions.splice(index, 1);
@@ -84,7 +99,7 @@ export default function QuizDetailsEditor({
     setEditQuestionIndex(index);
     setNewQuestion(quiz.questions[index]);
   };
-  
+
   useEffect(() => {
     const totalQuizPoints = quiz.questions.reduce(
       (total: number, question: any) => total + question.points,
@@ -201,6 +216,12 @@ export default function QuizDetailsEditor({
                           }
                         />
                       </label>
+                      <button
+                        className="btn btn-sm btn-danger ms-2"
+                        onClick={() => removeAnswer(idx)}
+                      >
+                        <FaTrash />
+                      </button>
                     </div>
                   ))}
                 </>
@@ -250,6 +271,12 @@ export default function QuizDetailsEditor({
                             }))
                           }
                         />
+                        <button
+                          className="btn btn-sm btn-danger ms-2"
+                          onClick={() => removeBlankAnswer(idx)}
+                        >
+                          <FaTrash />
+                        </button>
                       </div>
                     )
                   )}
@@ -428,6 +455,12 @@ export default function QuizDetailsEditor({
                         }
                       />
                     </label>
+                    <button
+                        className="btn btn-sm btn-danger ms-2"
+                        onClick={() => removeAnswer(index)}
+                      >
+                        <FaTrash />
+                      </button>
                   </div>
                 ))}
               </>
@@ -480,6 +513,12 @@ export default function QuizDetailsEditor({
                           }))
                         }
                       />
+                        <button
+                          className="btn btn-sm btn-danger ms-2"
+                          onClick={() => removeBlankAnswer(index)}
+                        >
+                          <FaTrash />
+                        </button>
                     </div>
                   )
                 )}

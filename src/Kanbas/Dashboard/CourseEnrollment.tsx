@@ -8,7 +8,12 @@ export default function CourseEnrollment({ courses, setCourses }: { courses: any
   const [expandedCourses, setExpandedCourses] = useState<Set<string>>(new Set());
 
   const enrollInCourse = async (course: any) => {
-    const updatedCourse = await client.updateCourse({ ...course, students: [...course.students, currentUser._id] });
+    if (course.students) {
+      const updatedCourse = await client.updateCourse({ ...course, students: [...course.students, currentUser._id] });
+    }
+    else {
+      const updatedCourse = await client.updateCourse({ ...course, students: [currentUser._id] });
+    }
     setCourses(
       courses.map((c) => {
         if (c._id === course._id) {
